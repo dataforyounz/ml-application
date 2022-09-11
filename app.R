@@ -28,8 +28,9 @@ ui <- navbarPage(
           
           tags$h4( "Controls" ),
           
-          selectInput('xcol', 'X Variable', vars),
-          selectInput('ycol', 'Y Variable', vars, selected = vars[[2]]),
+          selectInput('xcol', 'X Variable', names(var_lookup)),
+          uiOutput( "update_dropdown" ),
+          #selectInput('ycol', 'Y Variable', names(var_lookup), selected = names(var_lookup)[2] ),
           numericInput('clusters', 'Cluster count', 3, min = 1, max = 9)
           
           ),
@@ -57,9 +58,20 @@ ui <- navbarPage(
 
 server <- function(input, output, session) {
   
+  output$update_dropdown <- renderUI({
+    
+    new_names <- reactive({
+      names(var_lookup)[names(var_lookup) != input$xcol]
+    })
+    
+    selectInput('ycol', 'Y Variable', new_names(), selected = new_names()[2] )
+    
+  })
+  
+  
   # Combine the selected variables into a new data frame
   selectedData <- reactive({
-    iris[, c(input$xcol, input$ycol)]
+    iris[, c(var_lookup[[input$xcol]], var_lookup[[input$ycol]]) ]
   })
   
   clusters <- reactive({
@@ -76,6 +88,7 @@ server <- function(input, output, session) {
                        col = as.factor(clusters()$cluster)), size = 3, alpha = .25) +
       geom_point( aes(x = clusters()$centers[,1], y = clusters()$centers[,2], 
                       col = as.factor(1:input$clusters) ), size = 5) +
+      labs( x = input$xcol, y = input$ycol) +
       theme_bw() + 
       theme( legend.position = "none",
              plot.background = element_rect(fill = "#1c1e22", color = "#0c0d0e"),
