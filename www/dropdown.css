@@ -1,0 +1,15 @@
+.selectize-input.full { 
+    background-color: #353c42 !important; 
+}
+                
+.selectize-input, .selectize-dropdown, .selectize-input input,
+.selectize-control.single .selectize-input.input-active {
+    color: #bec5cb !important;
+    background: #353c42 !important; 
+}
+                  
+.selectize-dropdown-content .active {
+    background: #66AFE9CC !important; 
+    border-radius: 4px;
+}
+                  
